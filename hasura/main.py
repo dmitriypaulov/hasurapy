@@ -1,4 +1,5 @@
 import requests
+from .where import jsonify_value
 
 class Hasura():
 
@@ -82,7 +83,35 @@ class Table():
         columnnames = [column[0] for column in result["result"]]
         return columnnames[1:]
 
-    def get(self, *args, one = False, count = False, total = False, page = None, limit = None, **kwargs):
+    def insert(self, exclude_cols = None, exact_cols = None, **kwargs):
+
+        data = ", ".join([f"{key}: {jsonify_value(value)}" for key, value in kwargs.items()])
+        columns = self.columns
+        
+        if exclude_cols and not exact_cols:
+            for col in exclude_cols:
+                if col in columns:
+                    columns.remove(col)
+
+        if exact_cols: columns = exact_cols
+        columns = "\n".join(columns)
+
+        mutation_code = f"""
+            mutation {{
+                insert_{self.tablename}_one(object: {{{data}}}) {{
+                    {columns}
+                }}
+            }}
+        """
+
+        response = self.hasura.request_graphql(mutation = mutation_code)
+
+        # TODO: map repsonse into a prettier dictionary
+
+        return response
+
+
+    def select(self, *args, one = False, count = False, total = False, page = None, limit = None, **kwargs):
 
         columns = []
         blocks = {}

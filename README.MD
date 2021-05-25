@@ -21,7 +21,7 @@ hasura = Hasura(
     }
 )
 
-cats = hasura.Cats.get(
+cats = hasura.Cats.select(
     OrderBy(livesLeft = desc),
     Where(
         color = in_(
@@ -34,12 +34,12 @@ cats = hasura.Cats.get(
 
 ```
 
-You can also use hasura's aggregation fields via using **count** and **total** parameters for **get** method of model.
+You can also use hasura's aggregation fields via using **count** and **total** parameters for **select** method of model.
 For example:
 
 ```python
 
-cats = hasura.Cats.get(
+cats = hasura.Cats.select(
     count = True,
     Where(
         color = in_(
@@ -51,7 +51,7 @@ cats = hasura.Cats.get(
 )
 # cats = {"data": [...], "count": 3}
 
-hungry_cats = hasura.Cats.get(
+hungry_cats = hasura.Cats.select(
     count = True,
     total = True,
     Where(isHungry = equal(True))
@@ -65,7 +65,7 @@ For example:
 
 ```python
 
-cats = hasura.Cats.get(
+cats = hasura.Cats.select(
     page = 4,
     limit = 20,
     count = True,
