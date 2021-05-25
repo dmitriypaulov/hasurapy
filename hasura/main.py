@@ -43,7 +43,6 @@ class Hasura():
         ) 
         return response.json()
             
-
     def __fetch_tablenames(self):
         
         result = self.run_sql("""
@@ -66,6 +65,13 @@ class Table():
     def build_columns(self):
         self.columns = self.__fetch_columns()
 
+    def stringify_block(self, key, value):
+        code = f"{key}: {{"
+        for column in value:
+            code += f"\n{column}"
+        code += "}"
+        return code
+
     def __fetch_columns(self):
         result = self.hasura.run_sql(f"""
             SELECT column_name FROM information_schema.columns
@@ -77,54 +83,53 @@ class Table():
         return columnnames[1:]
 
     def get(self, *args, one = False, count = False, total = False, page = None, limit = None, **kwargs):
-        columns_to_fetch = []
-        blocks_to_fetch = {}
-        parameters = []
+
+        columns = []
+        blocks = {}
+        params = []
         
-        if limit: parameters.append(f"limit: {limit}")
-        if page and limit: parameters.append(f"offse0t: {(page - 1) * limit}")
+        if limit: params.append(f"limit: {limit}")
+        if page and limit: params.append(f"offset: {(page - 1) * limit}")
 
         for arg in args:
             if isinstance(arg, str):
-                columns_to_fetch.append(arg)
-            else: parameters.append(str(arg))
+                columns.append(arg)
+            else: params.append(str(arg))
+        columns = "\n".join(columns) if columns else "\nid"
 
         for key, value in kwargs.items():
             if isinstance(value, (list, tuple)):
-                blocks_to_fetch[key] = value
-            else: parameters.append(str(arg))
+                blocks[key] = value
+            else: params.append(str(arg))
 
-        _parameters = f"({','.join(parameters)})" if parameters else ""
-        count_parameters = [item for item in parameters if item.split()[0] in ("where:", "distinct_on:")]
-        _count_parameters = f"({','.join(count_parameters)})" if count_parameters else ""
-
-        if not columns_to_fetch: columns_to_fetch.append("id")
-        _columns_to_fetch = "\n".join(columns_to_fetch)
-
-        _blocks_to_fetch = ""
-        for key, value in blocks_to_fetch.items():
-            _blocks_to_fetch += key + "{\n"
-            for item in value: _blocks_to_fetch += f"\t{item}\n"
-            _blocks_to_fetch += "}\n"
+        blocks = "\n".join([
+            self.stringify_block(key, value)
+            for key, value 
+            in blocks.items()
+        ])
+        
+        cparams = list(filter(lambda item: item.startswith("where") or item.startswith("distinct_on"), params))
+        cparams = f"({', '.join(cparams)})" if cparams else ""
+        params = f"({', '.join(params)})" if params else ""
 
         count_code = f"""
-                {self.tablename}_aggregate{'' if total else _count_parameters} {{
-                    aggregate {{
-                        count
-                    }}
+            {self.tablename}_aggregate{'' if total else cparams} {{
+                aggregate {{
+                    count
                 }}
+            }}
         """
 
         query_code = f"""
             query {{
-                {self.tablename}{_parameters} {{
-                    {_columns_to_fetch}
-                    {_blocks_to_fetch}
+                {self.tablename}{params} {{
+                    {columns}
+                    {blocks}
                 }}
                 {count_code if count else ''}
             }}
         """
-
+        
         response = self.hasura.request_graphql(query = query_code)
 
         try:
