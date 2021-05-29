@@ -1,4 +1,4 @@
-from .main import Hasura
+from .core import Hasura
 from .distinct_on import DistinctOn
 from .order_by import OrderBy
 from .where import Where

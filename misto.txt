@@ -1,0 +1,463 @@
+<Hasura url='https://api.misto.site/v1/graphql' tables = [   
+        <Table name='LocalizedWeekDays' columns = [
+                <Column name='weekDayId' type='integer'>     
+                <Column name='langId' type='integer'>        
+                <Column name='name' type='character varying'>
+        ]
+        <Table name='LocalizedServicesList' columns = [      
+                <Column name='serviceId' type='integer'>     
+                <Column name='langId' type='integer'>        
+                <Column name='name' type='character varying'>
+        ]
+        <Table name='Organization' columns = [
+                <Column name='id' type='integer'>
+                <Column name='botId' type='integer'>
+                <Column name='images' type='character varying'>
+                <Column name='name' type='character varying'>
+                <Column name='title' type='character varying'>
+                <Column name='description' type='character varying'>
+                <Column name='createUserId' type='integer'>
+                <Column name='organizationCategoryMainId' type='integer'>
+                <Column name='enable' type='boolean'>
+                <Column name='address' type='character varying'>
+                <Column name='email' type='character varying'>
+                <Column name='phone' type='character varying'>
+                <Column name='longitude' type='numeric'>
+                <Column name='latitude' type='numeric'>
+                <Column name='timezoneId' type='integer'>
+                <Column name='workplaceMany' type='boolean'>
+                <Column name='qrcode' type='character varying'>
+                <Column name='tokenBot' type='character varying'>
+                <Column name='paid' type='boolean'>
+                <Column name='paidDateEnd' type='date'>
+                <Column name='organizationMany' type='boolean'>
+                <Column name='organizationId' type='integer'>
+                <Column name='regionId' type='character varying'>
+                <Column name='districtId' type='character varying'>
+                <Column name='communityId' type='character varying'>
+                <Column name='localityId' type='character varying'>
+                <Column name='localityDistrictId' type='character varying'>
+                <Column name='serviceTypeId' type='integer'>
+        ]
+        <Table name='OrganizationEmployees' columns = [
+                <Column name='id' type='integer'>
+                <Column name='organizationId' type='integer'>
+                <Column name='employeeId' type='integer'>
+                <Column name='fullName' type='character varying'>
+                <Column name='photo' type='character varying'>
+        ]
+        <Table name='LocalizedOrganizationCategories' columns = [
+                <Column name='organizationCategoryId' type='integer'>
+                <Column name='langId' type='integer'>
+                <Column name='name' type='character varying'>
+        ]
+        <Table name='LocalizedBotStrings' columns = [
+                <Column name='sysname' type='character varying'>
+                <Column name='langId' type='integer'>
+                <Column name='value' type='text'>
+        ]
+        <Table name='OrganizationBotsLanguages' columns = [
+                <Column name='langId' type='integer'>
+                <Column name='organizationBotId' type='integer'>
+        ]
+        <Table name='OrganizationBots' columns = [
+                <Column name='id' type='integer'>
+                <Column name='name' type='character varying'>
+                <Column name='token' type='character varying'>
+                <Column name='langId' type='integer'>
+                <Column name='organizationCategoryId' type='integer'>
+        ]
+        <Table name='OrganizationDaysWork' columns = [
+                <Column name='organizationId' type='integer'>
+                <Column name='weekDayId' type='integer'>
+                <Column name='workTimeStart' type='timestamp with time zone'>
+                <Column name='workTimeEnd' type='timestamp with time zone'>
+                <Column name='dinnerTimeStart' type='timestamp with time zone'>
+                <Column name='dinnerTimeEnd' type='timestamp with time zone'>
+        ]
+        <Table name='OrganizationDaysOff' columns = [
+                <Column name='organizationId' type='integer'>
+                <Column name='date' type='date'>
+        ]
+        <Table name='OrganizationAdmins' columns = [
+                <Column name='organizationId' type='integer'>
+                <Column name='userId' type='integer'>
+                <Column name='active' type='boolean'>
+                <Column name='disable' type='boolean'>
+        ]
+        <Table name='OrganizationCategoriesList' columns = [
+                <Column name='id' type='integer'>
+                <Column name='name' type='character varying'>
+                <Column name='organizationMainCategoryId' type='integer'>
+                <Column name='emoji' type='character varying'>
+                <Column name='sorting' type='integer'>
+                <Column name='enable' type='boolean'>
+                <Column name='typeId' type='integer'>
+        ]
+        <Table name='OrganizationWorkplaceEmployees' columns = [
+                <Column name='organizationWorkplaceId' type='integer'>
+                <Column name='organizationEmployeeId' type='integer'>
+        ]
+        <Table name='OrganizationWorkplaceDaysOff' columns = [
+                <Column name='organizationWorkplaceId' type='integer'>
+                <Column name='date' type='date'>
+        ]
+        <Table name='OrganizationUsers' columns = [
+                <Column name='userId' type='integer'>
+                <Column name='organizationId' type='integer'>
+                <Column name='roleId' type='integer'>
+        ]
+        <Table name='WeekDaysList' columns = [
+                <Column name='id' type='integer'>
+                <Column name='name' type='character varying'>
+        ]
+        <Table name='CountriesList' columns = [
+                <Column name='id' type='integer'>
+                <Column name='code' type='character varying'>
+                <Column name='name' type='character varying'>
+        ]
+        <Table name='CabinetMenuList' columns = [
+                <Column name='id' type='integer'>
+                <Column name='name' type='character varying'>
+                <Column name='url' type='character varying'>
+                <Column name='sort' type='integer'>
+        ]
+        <Table name='LocalizedNewsCategories' columns = [
+                <Column name='newsCategoryId' type='integer'>
+                <Column name='langId' type='integer'>
+                <Column name='name' type='character varying'>
+        ]
+        <Table name='LocalizedCabinetMenus' columns = [
+                <Column name='cabinetMenuId' type='integer'>
+                <Column name='langId' type='integer'>
+                <Column name='name' type='character varying'>
+        ]
+        <Table name='NewsCategoriesList' columns = [
+                <Column name='id' type='integer'>
+                <Column name='name' type='character varying'>
+                <Column name='sort' type='integer'>
+                <Column name='url' type='character varying'>
+        ]
+        <Table name='LocalizedNewsThemes' columns = [
+                <Column name='themeId' type='integer'>
+                <Column name='langId' type='integer'>
+                <Column name='name' type='character varying'>
+        ]
+        <Table name='Lang' columns = [
+                <Column name='id' type='integer'>
+                <Column name='code' type='character varying'>
+                <Column name='name' type='character varying'>
+        ]
+        <Table name='Employees' columns = [
+                <Column name='id' type='integer'>
+                <Column name='userId' type='integer'>
+                <Column name='photo' type='character varying'>
+                <Column name='fullName' type='character varying'>
+        ]
+        <Table name='NewsGalleryPhoto' columns = [
+                <Column name='id' type='uuid'>
+                <Column name='newsGalleryId' type='uuid'>
+                <Column name='newsId' type='uuid'>
+                <Column name='createOn' type='timestamp without time zone'>
+                <Column name='createBy' type='integer'>
+                <Column name='updateOn' type='timestamp without time zone'>
+                <Column name='updateBy' type='integer'>
+                <Column name='deleteOn' type='timestamp without time zone'>
+                <Column name='deleteBy' type='integer'>
+                <Column name='sort' type='integer'>
+                <Column name='siteId' type='integer'>
+        ]
+        <Table name='LocalizedNewsLevels' columns = [
+                <Column name='id' type='uuid'>
+                <Column name='newsLevelId' type='integer'>
+                <Column name='langId' type='integer'>
+                <Column name='name' type='character varying'>
+        ]
+        <Table name='Roles' columns = [
+                <Column name='id' type='integer'>
+                <Column name='name' type='character varying'>
+        ]
+        <Table name='Users' columns = [
+                <Column name='id' type='integer'>
+                <Column name='createOn' type='timestamp without time zone'>
+                <Column name='createBy' type='integer'>
+                <Column name='updateOn' type='timestamp without time zone'>
+                <Column name='updateBy' type='integer'>
+                <Column name='deleteOn' type='timestamp without time zone'>
+                <Column name='deleteBy' type='integer'>
+                <Column name='block' type='boolean'>
+                <Column name='nickName' type='character varying'>
+                <Column name='email' type='character varying'>
+                <Column name='passwordHash' type='character varying'>
+                <Column name='langId' type='integer'>
+                <Column name='roleId' type='integer'>
+                <Column name='phone' type='text'>
+                <Column name='firstName' type='character varying'>
+                <Column name='lastName' type='character varying'>
+                <Column name='longitude' type='double precision'>
+                <Column name='latitude' type='double precision'>
+                <Column name='timeZoneId' type='integer'>
+                <Column name='telegram' type='integer'>
+                <Column name='regionId' type='text'>
+                <Column name='districtId' type='text'>
+                <Column name='communityId' type='text'>
+                <Column name='localityId' type='text'>
+                <Column name='localityDistrictId' type='text'>
+        ]
+        <Table name='LocalizedNewsTrust' columns = [
+                <Column name='trustId' type='integer'>
+                <Column name='langId' type='integer'>
+                <Column name='name' type='character varying'>
+        ]
+        <Table name='LocalizedNewsType' columns = [
+                <Column name='typeId' type='integer'>
+                <Column name='langId' type='integer'>
+                <Column name='name' type='character varying'>
+        ]
+        <Table name='LocalizedSiteMenuList' columns = [
+                <Column name='siteMenuListId' type='integer'>
+                <Column name='langId' type='integer'>
+                <Column name='name' type='character varying'>
+        ]
+        <Table name='News' columns = [
+                <Column name='id' type='uuid'>
+                <Column name='siteId' type='integer'>
+                <Column name='createOn' type='timestamp without time zone'>
+                <Column name='createBy' type='integer'>
+                <Column name='updateOn' type='timestamp without time zone'>
+                <Column name='updateBy' type='integer'>
+                <Column name='deleteOn' type='timestamp without time zone'>
+                <Column name='deleteBy' type='integer'>
+                <Column name='postedIn' type='timestamp without time zone'>
+                <Column name='postedBy' type='integer'>
+                <Column name='urlNumber' type='integer'>
+                <Column name='categoryId' type='integer'>
+                <Column name='typeId' type='integer'>
+                <Column name='themeId' type='integer'>
+                <Column name='levelId' type='integer'>
+                <Column name='hot' type='boolean'>
+                <Column name='promo' type='boolean'>
+                <Column name='trustId' type='integer'>
+                <Column name='thereIsPhoto' type='boolean'>
+                <Column name='thereIsVideo' type='boolean'>
+        ]
+        <Table name='NewsGallery' columns = [
+                <Column name='id' type='uuid'>
+                <Column name='newsId' type='uuid'>
+                <Column name='createOn' type='timestamp with time zone'>
+                <Column name='createBy' type='integer'>
+                <Column name='updateOn' type='timestamp with time zone'>
+                <Column name='updateBy' type='integer'>
+                <Column name='deleteOn' type='timestamp with time zone'>
+                <Column name='deleteBy' type='integer'>
+                <Column name='name' type='character varying'>
+        ]
+        <Table name='NewsTags' columns = [
+                <Column name='id' type='uuid'>
+                <Column name='name' type='character varying'>
+                <Column name='url' type='character varying'>
+        ]
+        <Table name='SiteInUser' columns = [
+                <Column name='siteId' type='integer'>
+                <Column name='userId' type='integer'>
+                <Column name='roleId' type='integer'>
+        ]
+        <Table name='NewsThemes' columns = [
+                <Column name='id' type='integer'>
+                <Column name='name' type='character varying'>
+                <Column name='url' type='character varying'>
+        ]
+        <Table name='NewsGalleryPhotoDiscription' columns = [
+                <Column name='id' type='uuid'>
+                <Column name='photoId' type='uuid'>
+                <Column name='createOn' type='timestamp without time zone'>
+                <Column name='createBy' type='integer'>
+                <Column name='updateOn' type='timestamp without time zone'>
+                <Column name='updateBy' type='integer'>
+                <Column name='deleteOn' type='timestamp without time zone'>
+                <Column name='deleteBy' type='integer'>
+                <Column name='langId' type='integer'>
+                <Column name='text' type='character varying'>
+        ]
+        <Table name='SitesInCity' columns = [
+                <Column name='siteId' type='integer'>
+                <Column name='defaultcity' type='boolean'>
+                <Column name='sort' type='integer'>
+        ]
+        <Table name='NewsTrustList' columns = [
+                <Column name='id' type='integer'>
+                <Column name='name' type='character varying'>
+        ]
+        <Table name='NewsTypesList' columns = [
+                <Column name='id' type='integer'>
+                <Column name='name' type='character varying'>
+        ]
+        <Table name='SiteMenuList' columns = [
+                <Column name='id' type='integer'>
+                <Column name='url' type='character varying'>
+        ]
+        <Table name='SitesMenuCustom' columns = [
+                <Column name='createOn' type='timestamp without time zone'>
+                <Column name='createBy' type='integer'>
+                <Column name='updateOn' type='timestamp without time zone'>
+                <Column name='updateBy' type='integer'>
+                <Column name='deleteOn' type='timestamp without time zone'>
+                <Column name='deleteBy' type='integer'>
+                <Column name='siteId' type='integer'>
+                <Column name='sort' type='integer'>
+                <Column name='newsThemeId' type='integer'>
+                <Column name='newsId' type='uuid'>
+                <Column name='enable' type='boolean'>
+        ]
+        <Table name='NewsInCategory' columns = [
+                <Column name='newsId' type='uuid'>
+                <Column name='categoryId' type='integer'>
+        ]
+        <Table name='NewsInTag' columns = [
+                <Column name='newsId' type='uuid'>
+                <Column name='newsTagId' type='uuid'>
+        ]
+        <Table name='NewsTexts' columns = [
+                <Column name='id' type='uuid'>
+                <Column name='newsId' type='uuid'>
+                <Column name='createOn' type='timestamp without time zone'>
+                <Column name='createBy' type='integer'>
+                <Column name='updateOn' type='timestamp without time zone'>
+                <Column name='updateBy' type='integer'>
+                <Column name='deleteOn' type='timestamp without time zone'>
+                <Column name='deleteBy' type='integer'>
+                <Column name='langId' type='integer'>
+                <Column name='title' type='character varying'>
+                <Column name='anons' type='character varying'>
+                <Column name='text' type='text'>
+                <Column name='img' type='character varying'>
+                <Column name='imgtext' type='character varying'>
+                <Column name='imgauthor' type='character varying'>
+                <Column name='sourceurl' type='character varying'>
+                <Column name='sourcetext' type='character varying'>
+        ]
+        <Table name='SiteInLang' columns = [
+                <Column name='siteId' type='integer'>
+                <Column name='langId' type='integer'>
+        ]
+        <Table name='Sites' columns = [
+                <Column name='id' type='integer'>
+                <Column name='domen' type='character varying'>
+                <Column name='langId' type='integer'>
+                <Column name='urlfacebook' type='character varying'>
+                <Column name='urltwitter' type='character varying'>
+                <Column name='urlinstagram' type='character varying'>
+                <Column name='urltelegram' type='character varying'>
+                <Column name='urlyoutube' type='character varying'>
+                <Column name='gtagcode' type='text'>
+        ]
+        <Table name='SitePages' columns = [
+                <Column name='id' type='integer'>
+                <Column name='siteId' type='integer'>
+                <Column name='langId' type='integer'>
+                <Column name='allsite' type='boolean'>
+                <Column name='url' type='character varying'>
+                <Column name='sort' type='integer'>
+                <Column name='title' type='character varying'>
+                <Column name='text' type='text'>
+        ]
+        <Table name='UsersRefetchTokens' columns = [
+                <Column name='refetchToken' type='uuid'>
+                <Column name='expiresatDate' type='timestamp without time zone'>
+                <Column name='createDate' type='timestamp without time zone'>
+                <Column name='userId' type='integer'>
+        ]
+        <Table name='CabinetMenuInRole' columns = [
+                <Column name='id' type='integer'>
+                <Column name='menuId' type='integer'>
+                <Column name='roleId' type='integer'>
+        ]
+        <Table name='NewsLevesList' columns = [
+                <Column name='id' type='integer'>
+                <Column name='name' type='character varying'>
+        ]
+        <Table name='SitesOptions' columns = [
+                <Column name='id' type='integer'>
+                <Column name='siteId' type='integer'>
+                <Column name='langId' type='integer'>
+                <Column name='logoUrl' type='character varying'>
+                <Column name='logoalt' type='character varying'>
+                <Column name='titleText' type='character varying'>
+                <Column name='footerblock1' type='character varying'>
+                <Column name='footerblock2' type='character varying'>
+        ]
+        <Table name='RegionsList' columns = [
+                <Column name='region' type='text'>
+                <Column name='district' type='text'>
+                <Column name='community' type='text'>
+                <Column name='locality' type='text'>
+                <Column name='localityDistrict' type='text'>
+                <Column name='category' type='text'>
+                <Column name='name' type='text'>
+        ]
+        <Table name='OrganizationWorkplaceDaysWork' columns = [
+                <Column name='organizationId' type='integer'>
+                <Column name='organizationWorkplaceId' type='integer'>
+                <Column name='weekDayId' type='integer'>
+                <Column name='fullDay' type='boolean'>
+                <Column name='workTimeStart' type='timestamp with time zone'>
+                <Column name='workTimeEnd' type='timestamp with time zone'>
+                <Column name='dinnerTimeStart' type='timestamp with time zone'>
+                <Column name='dinnerTimeEnd' type='timestamp with time zone'>
+        ]
+        <Table name='OrganizationWorkplaceServices' columns = [
+                <Column name='organizationWorkplaceId' type='integer'>
+                <Column name='organizationServiceId' type='integer'>
+                <Column name='sorting' type='integer'>
+                <Column name='name' type='character varying'>
+                <Column name='priceMin' type='integer'>
+                <Column name='priceMax' type='integer'>
+                <Column name='organizationId' type='integer'>
+                <Column name='organizationMainServiceId' type='integer'>
+                <Column name='organizationCategoryId' type='integer'>
+        ]
+        <Table name='OrganizationServicesList' columns = [
+                <Column name='id' type='integer'>
+                <Column name='organizationCategoryListId' type='integer'>
+                <Column name='organizationMainServiceListId' type='integer'>
+                <Column name='name' type='character varying'>
+                <Column name='emoji' type='character varying'>
+                <Column name='sorting' type='integer'>
+                <Column name='enable' type='boolean'>
+                <Column name='typeId' type='integer'>
+        ]
+        <Table name='OrganizationInCategory' columns = [
+                <Column name='organizationId' type='integer'>
+                <Column name='organizationCategoryId' type='integer'>
+                <Column name='isMain' type='boolean'>
+        ]
+        <Table name='OrganizationWorkplaces' columns = [
+                <Column name='id' type='integer'>
+                <Column name='organizationId' type='integer'>
+                <Column name='sorting' type='integer'>
+                <Column name='name' type='character varying'>
+                <Column name='active' type='boolean'>
+        ]
+        <Table name='OrganizationRecords' columns = [
+                <Column name='id' type='integer'>
+                <Column name='userId' type='integer'>
+                <Column name='organizationId' type='integer'>
+                <Column name='recordDateTime' type='timestamp with time zone'>
+                <Column name='agreed' type='boolean'>
+                <Column name='agreedUser' type='boolean'>
+                <Column name='cancelled' type='boolean'>
+                <Column name='serviceId' type='integer'>
+        ]
+        <Table name='OrganizationTypesList' columns = [
+                <Column name='id' type='integer'>
+                <Column name='name' type='character varying'>
+        ]
+        <Table name='OrganizationServiceTypesList' columns = [
+                <Column name='id' type='integer'>
+                <Column name='name' type='character varying'>
+        ]
+        <Table name='UserFavorites' columns = [
+                <Column name='userId' type='integer'>
+                <Column name='organizationId' type='integer'>
+        ]
+]
