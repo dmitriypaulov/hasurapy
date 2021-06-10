@@ -43,54 +43,52 @@ class Table():
 
         self.__dict__.update(self.columns)
 
-    def select(self, *args, include = None, exclude = None, **kwargs):
-        
-        if not include: include = list(self.columns.values())
+    def _returning(self, include = None, exclude = None):
+
+        column_queries = []
+        if not include: column_queries = [ColumnQuery(column) for column in self.columns.values()]
         else: 
-            _include = []
-            for column in include:
-                if type(column) is str:
-                    _column = self[column] 
-                    if not _column: 
-                        raise KeyError(
-                           "Column %s doesn't exist in table %s" 
-                           % (self.name, column)
-                        )
-                    _include.append(ColumnQuery(_column))
-                elif type(column) is dict: _include.extend(ColumnQuery.from_dict(column))
-                else: _include.append(ColumnQuery(column))
-            include = _include
+            for field in include:
+                
+                if type(field) is str:
+                    column_queries.append(ColumnQuery(self.columns[field]))
+                
+                if type(field) is Column:
+                    column_queries.append(ColumnQuery(self.columns[field.name]))
+                
+                elif type(field) is dict:
+                    for key, value in field.items():
+                        column_queries.append(ColumnQuery(self.columns[key], *value))
 
-        # if not exclude: exclude = []
-        # else: 
-        #     _exclude = []
-        #     for column in exclude:
-        #         if type(column) is str:
-        #             _column = self[column]
-        #             if not _column: 
-        #                 raise KeyError(
-        #                     "Column %s doesn't exist in table %s" 
-        #                     % (self.name, column)
-        #                 )
-        #             column = _column
-        #         elif type(column) is dict:
-        #             pass
+        if exclude:
+            for field in exclude:
+                
+                if type(field) is str:
+                    for index, query in enumerate(column_queries):
+                        if query.column.name == field:
+                            del column_queries[index]
+                
+                if type(field) is Column:
+                    for index, query in enumerate(column_queries):
+                        if query.column.name == field.name:
+                            del column_queries[index]
+                    
+                if type(field) is dict:
+                    for key, value in field.items():
+                        for query in column_queries:
+                            if query.column.name == key:
+                                for exclude_column in value:
+                                    for index, nested in enumerate(query.fields):
+                                        if nested.column.name == exclude_column:
+                                            del query.fields[index]
 
-        #         _exclude.append(column)
-        #     exclude = _exclude
-            
+        return " ".join(map(str, column_queries))
+
+    def select(self, *args, include = None, exclude = None, **kwargs):
+        returning = self._returning(include, exclude)
+        print(returning)
+
         
-
-        # for column in exclude:
-        #     if column in include:
-        #         include.remove(column)
-
-        _params = ""
-        _fetch = " ".join([column_query.parse() for column_query in include])
-
-        code = f"query{{{self.name}{_params}{{{_fetch}}}}}"
-        return code
-
                 
                 
 

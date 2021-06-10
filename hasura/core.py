@@ -85,13 +85,16 @@ class Hasura():
                         """
                     }
                 )["result"][1][0]
-
-                _table.columns[relationship["name"]] = Column(
+                
+                col = Column(   
                     relationship["name"], 
                     relationship["type"], 
                     _table,
                     self[ref_table].columns
                 )
+
+                _table.columns[relationship["name"]] = col
+                _table[relationship["name"]] = col
 
 
 

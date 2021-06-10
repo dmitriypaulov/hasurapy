@@ -2,28 +2,29 @@ import textwrap
 
 class Column():
 
-    def __init__(self, name, _type, table, columns = None):
+    def __init__(self, name, _type, table, nested = None):
 
         self.name = name
         self._type = _type
         self.table = table
-        self.columns = columns or {}
+        self.nested = nested or {}
 
-        for column in self.columns.values():
+        for column in self.nested.values():
             column.parent = self
 
     def __setattr__(self, name, value): self.__dict__[name] = value
     def __getattr__(self, name, default = None): return self.__dict__.get(name, default)
     def __setitem__(self, name, value): self.__dict__[name] = value
     def __getitem__(self, name): return self.__dict__.get(name, None)
+    def __call__(self, *args): return {self.name: [*args]}
 
     def __str__(self): return f"<Column name='{self.name}' type='{self._type}'>"
     def __repr__(self): return self.__str__()
 
     def pretty_str(self, show_nested = True):
-        if self.columns and show_nested:
-            _string = f"<Column name='{self.name}' type='{self._type}' columns = [\n"
-            for column in self.columns.values():
+        if self.nested and show_nested:
+            _string = f"<Column name='{self.name}' type='{self._type}' nested = [\n"
+            for column in self.nested.values():
                 _string += textwrap.indent(
                     column.pretty_str(
                         show_nested = False
@@ -34,33 +35,22 @@ class Column():
         else: return str(self)
 
 class ColumnQuery():
-    def __init__(self, column, include = None, exclude = None):
+    def __init__(self, column, *include):
         self.column = column
         self.fields = []
-        
-        if not exclude: exclude = []
 
-        _exclude = []
-        for col in exclude:
-           
-            if type(col) is str:
-                col = self.column[col]
-           
-            if type(col) is dict:
-                pass
+        if not include: self.fields = [ColumnQuery(column) for column in self.column.nested.values()]
+        else:
+            for field in include:
+                
+                if type(field) is str:
+                    self.fields.append(ColumnQuery(self.column.nested[field]))
+                
+                elif type(field) is dict:
+                    for key, value in field.items():
+                        self.fields.append(ColumnQuery(self.column.nested[key], include = value))
 
-            _exclude.append(column) 
-        
-        self.exclude = _exclude
-
-        if not include: include = list(self.columns.values())
-        _include = []
-        for column in include:
-            if type(column) is str:
-                column = self[column]
-            _include.append(column)
-        self.include = _include
-
-        for column in include:
-            if not column in exclude:
-                self.fields.append(column.name)
+    def __str__(self): 
+        if self.fields: 
+            return f"{self.column.name}: {{{' '.join(map(str, self.fields))}}}"
+        else: return self.column.name
