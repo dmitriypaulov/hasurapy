@@ -1,3 +1,6 @@
+from hasura.where.complex_condition import ComplexCondition
+from hasura.where import ConditionRule
+from hasura.where.condition import Condition, equal, is_null
 import textwrap
 from .column import Column, ColumnQuery
 
@@ -10,9 +13,9 @@ class Table():
         self.fetch_metadata()
 
     def __setattr__(self, name, value): self.__dict__[name] = value
-    def __getattr__(self, name, default = None): return self.__dict__.get(name, default)
+    def __getattr__(self, name, default = None) -> Column: return self.__dict__.get(name, default)
     def __setitem__(self, name, value): self.__dict__[name] = value
-    def __getitem__(self, name): return self.__dict__.get(name, None)
+    def __getitem__(self, name) -> Column: return self.__dict__.get(name, None)
 
     def __str__(self): return f"<Table name='{self.name}' columns={list(self.columns.values())}>"
     def __repr__(self): return self.__str__()
@@ -84,9 +87,33 @@ class Table():
 
         return " ".join(map(str, column_queries))
 
-    def select(self, *args, include = None, exclude = None, **kwargs):
+    def select(self, *args, include = None, exclude = None, count = False, total = False, page = None, limit = None, **kwargs):
         returning = self.returning(include, exclude)
-        print(returning)
+        parameters = []
+
+        where = []
+        for key, value in kwargs.items():
+            if isinstance(value, Condition):
+                where.append(ConditionRule(key, value))
+
+            if isinstance(value, (str, int, float, bool, list, dict)):
+                where.append(ConditionRule(key, equal(value)))
+
+            if value == None: 
+                where.append(ConditionRule(key, is_null()))
+    
+        for arg in args:
+            if isinstance(arg, ComplexCondition):
+                where.append(arg)
+
+        if where: parameters.append("where: {" + ",".join(map(str, where)) + "}")
+
+
+        # TODO: Aggregation by count, total count, max, min and average values
+
+        parameters = f"({','.join(parameters)})" if parameters else ""
+        query_code = f"query {{{self.name}{parameters}{{{returning}}}}}"
+        print(query_code)
 
         
                 
