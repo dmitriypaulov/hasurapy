@@ -43,7 +43,7 @@ class Table():
 
         self.__dict__.update(self.columns)
 
-    def _returning(self, include = None, exclude = None):
+    def returning(self, include = None, exclude = None):
 
         column_queries = []
         if not include: column_queries = [ColumnQuery(column) for column in self.columns.values()]
@@ -85,7 +85,7 @@ class Table():
         return " ".join(map(str, column_queries))
 
     def select(self, *args, include = None, exclude = None, **kwargs):
-        returning = self._returning(include, exclude)
+        returning = self.returning(include, exclude)
         print(returning)
 
         

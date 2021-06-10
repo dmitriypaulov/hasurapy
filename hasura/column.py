@@ -39,7 +39,7 @@ class ColumnQuery():
         self.column = column
         self.fields = []
 
-        if not include: self.fields = [ColumnQuery(column) for column in self.column.nested.values()]
+        if not include: self.fields = [ColumnQuery(column) for column in self.column.nested.values() if not column.nested]
         else:
             for field in include:
                 
