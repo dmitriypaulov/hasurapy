@@ -7,4 +7,4 @@ class distinct_on():
             self.column = column.name
         else: self.column = column
         
-    def __str__(self): return f"disinct_on: {self.column}"
+    def __str__(self): return f"distinct_on: {self.column}"

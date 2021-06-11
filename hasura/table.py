@@ -1,9 +1,9 @@
-from hasura.distinct_on import distinct_on
-from hasura.where.complex_condition import ComplexCondition
-from hasura.where import ConditionRule
-from hasura.where.condition import Condition, equal, is_null
+from hasura.aggregate import aggregate
 import textwrap
-from .column import Column, ColumnQuery
+from hasura.where.where import where
+from hasura.distinct_on import distinct_on
+from hasura.pagination import limit, offset, page
+from hasura.column import Column, ColumnQuery
 
 class Table():
 
@@ -88,30 +88,30 @@ class Table():
 
         return " ".join(map(str, column_queries))
 
-    def select(self, *args, include = None, exclude = None, count = False, total = False, page = None, limit = None, **kwargs):
-        returning = self.returning(include, exclude)
+    def parameters(self, *args):
+
         parameters = []
-
-        where = []
-        for key, value in kwargs.items():
-            if isinstance(value, Condition): where.append(ConditionRule(key, value))
-            if isinstance(value, (str, int, float, bool, list, dict)): where.append(ConditionRule(key, equal(value)))
-            if value == None: where.append(ConditionRule(key, is_null()))
-    
         for arg in args:
-            if isinstance(arg, ComplexCondition): where.append(arg)
-            if isinstance(arg, distinct_on): parameters.append(str(arg))
+            if isinstance(arg, (
+                where, distinct_on, 
+                limit, offset, page
+            )): parameters.append(arg)
+        return f"({', '.join(map(str, parameters))})" if parameters else ""
 
-        if limit: 
-            parameters.append(f"limit: {limit}")
-            if page: parameters.append(f"offset: {(page - 1) * limit}")
-        if where: parameters.append("where: {" + ", ".join(map(str, where)) + "}")
+    def select(self, *args, include = None, exclude = None):
+        
+        returning = self.returning(include, exclude)
+        parameters = self.parameters(*args)
 
-        # TODO: Aggregation by count, total count, max, min and average values
-        # TODO: order_by option
+        _aggregate = ""
+        for arg in args:
+            if isinstance(arg, aggregate):
+                arg.tablename = self.name
+                if arg.all: arg.parameters = ""
+                else: arg.parameters = parameters
+                _aggregate = str(arg)
 
-        parameters = f"({', '.join(parameters)})" if parameters else ""
-        query_code = f"query {{{self.name}{parameters}{{{returning}}}}}"
+        query_code = f"query {{{self.name}{parameters}{{{returning}}}{_aggregate}}}"
         print(query_code)
 
         
