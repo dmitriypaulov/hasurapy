@@ -1,3 +1,4 @@
+from hasura.distinct_on import distinct_on
 from hasura.where.complex_condition import ComplexCondition
 from hasura.where import ConditionRule
 from hasura.where.condition import Condition, equal, is_null
@@ -98,18 +99,18 @@ class Table():
             if value == None: where.append(ConditionRule(key, is_null()))
     
         for arg in args:
-            if isinstance(arg, ComplexCondition):
-                where.append(arg)
+            if isinstance(arg, ComplexCondition): where.append(arg)
+            if isinstance(arg, distinct_on): parameters.append(str(arg))
 
         if limit: 
             parameters.append(f"limit: {limit}")
-            if page:
-                parameters.append(f"offset: {(page - 1) * limit}")
-        if where: parameters.append("where: {" + ",".join(map(str, where)) + "}")
+            if page: parameters.append(f"offset: {(page - 1) * limit}")
+        if where: parameters.append("where: {" + ", ".join(map(str, where)) + "}")
 
         # TODO: Aggregation by count, total count, max, min and average values
+        # TODO: order_by option
 
-        parameters = f"({','.join(parameters)})" if parameters else ""
+        parameters = f"({', '.join(parameters)})" if parameters else ""
         query_code = f"query {{{self.name}{parameters}{{{returning}}}}}"
         print(query_code)
 

@@ -22,7 +22,7 @@ class ComplexCondition(Condition):
                 self.rules.append(arg)
 
     def __str__(self): 
-        _rules = ','.join(str(rule) for rule in self.rules)
+        _rules = ', '.join(str(rule) for rule in self.rules)
         return f"{self.notation}: {{{_rules}}}"
 
 # {_and: {...conditions}}

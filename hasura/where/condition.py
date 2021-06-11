@@ -6,7 +6,7 @@ class Condition():
 
     def jsonify(self, value):
         if type(value) in (tuple, list): 
-            _value = ','.join(
+            _value = ', '.join(
                 list(
                     map(
                         self.jsonify, 
@@ -16,7 +16,7 @@ class Condition():
             )
             return f"[{_value}]"
         elif type(value) is dict:
-            _value = ','.join([
+            _value = ', '.join([
                 key + ':' + self.jsonify(value) 
                 for key, value in value.items()
             ])
