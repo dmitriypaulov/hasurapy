@@ -93,21 +93,19 @@ class Table():
 
         where = []
         for key, value in kwargs.items():
-            if isinstance(value, Condition):
-                where.append(ConditionRule(key, value))
-
-            if isinstance(value, (str, int, float, bool, list, dict)):
-                where.append(ConditionRule(key, equal(value)))
-
-            if value == None: 
-                where.append(ConditionRule(key, is_null()))
+            if isinstance(value, Condition): where.append(ConditionRule(key, value))
+            if isinstance(value, (str, int, float, bool, list, dict)): where.append(ConditionRule(key, equal(value)))
+            if value == None: where.append(ConditionRule(key, is_null()))
     
         for arg in args:
             if isinstance(arg, ComplexCondition):
                 where.append(arg)
 
+        if limit: 
+            parameters.append(f"limit: {limit}")
+            if page:
+                parameters.append(f"offset: {(page - 1) * limit}")
         if where: parameters.append("where: {" + ",".join(map(str, where)) + "}")
-
 
         # TODO: Aggregation by count, total count, max, min and average values
 
