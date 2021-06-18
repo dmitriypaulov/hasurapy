@@ -1,4 +1,4 @@
-from hasura.where import ConditionRule
+from hasura.where.condition_rule import ConditionRule
 from hasura.where.condition import Condition, equal, is_null
 
 class ComplexCondition(Condition):

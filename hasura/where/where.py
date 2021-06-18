@@ -1,5 +1,5 @@
 from hasura.where.complex_condition import ComplexCondition
-from hasura.where import ConditionRule
+from hasura.where.condition_rule import ConditionRule
 from hasura.where.condition import Condition, equal, is_null
 
 class where():
