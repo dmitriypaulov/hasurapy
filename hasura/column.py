@@ -13,13 +13,21 @@ class Column():
             column.parent = self
 
     def __setattr__(self, name, value): self.__dict__[name] = value
-    def __getattr__(self, name, default = None): return self.__dict__.get(name, default)
-    def __setitem__(self, name, value): self.__dict__[name] = value
-    def __getitem__(self, name): return self.__dict__.get(name, None)
+    def __getattr__(self, name, default = None): 
+        item = self.__dict__.get(name, default)
+        if not item: item = self.nested.get(name, default)
+        return item
+
+    def __setitem__(self, name, value): setattr(self, name, value)
+    def __getitem__(self, name): return getattr(self, name)
     def __call__(self, *args): return {self.name: [*args]}
 
     def __str__(self): return f"<Column name='{self.name}' type='{self._type}'>"
     def __repr__(self): return self.__str__()
+
+    def resolve(self): 
+        if self.parent: return f"{self.parent.resolve()}__{self.name}"
+        else: return self.name
 
     def pretty_str(self, show_nested = True):
         if self.nested and show_nested:
