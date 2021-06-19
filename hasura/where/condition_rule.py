@@ -1,14 +1,24 @@
+from hasura.where.condition import Condition, equal, is_null
+
+
 class ConditionRule():
     
-    def __init__(self, column, condition):
-        self.column = column
+    def __init__(self, name, condition):
+        self.name = name
         self.condition = condition
 
-    def __str__(self):
-        if "__" in self.column: 
-            string = ""
-            blocks = self.column.split("__")
-            for block in blocks: string += block + ": {"
-            string += str(self.condition) + "}" * len(blocks)
-            return string
-        else: return f"{self.column}: {{{self.condition}}}"
+    def __str__(self): return f"{self.name}: {{{self.condition}}}"
+    def __repr__(self): return str(self)
+
+
+class ConditionBlock():
+
+    def __init__(self, name, rules = None): 
+        self.name = name
+        self.rules = rules or []
+
+    def append(self, rule): self.rules.append(rule)
+    def extend(self, rules): self.rules.extend(rules)
+
+    def __str__(self): return f"{self.name}: {{{', '.join(map(str, self.rules))}}}"
+    def __repr__(self): return str(self)
