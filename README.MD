@@ -10,8 +10,8 @@ Usage example:
 ```python
 
 from hasura import Hasura
-from hasura.where import Where, in_
-from hasura.order_by import OrderBy, desc
+from hasura.where import where, is_in
+from hasura.order_by import order_by, desc
 
 hasura = Hasura(
     "https://my.awesome.site/v1/graphql",
@@ -21,10 +21,11 @@ hasura = Hasura(
     }
 )
 
-cats = hasura.Cats.select(
-    OrderBy(livesLeft = desc),
-    Where(
-        color = in_(
+cats = hasura.Cats
+result = cats.select(
+    order_by(livesLeft = desc), # desc(cats.livesLeft) or desc("livesLeft")
+    where(
+        color = is_in(
             "Grey", 
             "Black", 
             "Green(?)"
@@ -34,44 +35,62 @@ cats = hasura.Cats.select(
 
 ```
 
-You can also use hasura's aggregation fields via using **count** and **total** parameters for **select** method of model.
+You can also use hasura's aggregation fields via using **aggregate** class.
 For example:
 
 ```python
+from hasura.aggregate import aggregate
 
 cats = hasura.Cats.select(
-    count = True,
-    Where(
-        color = in_(
+    aggregate(
+        count = True, min = "livesLeft", 
+        max = "hunger", average = "lifeLength"
+    ),
+
+    where(
+        color = is_in(
             "Grey", 
             "Black", 
             "Transparent"
         )
     )
 )
-# cats = {"data": [...], "count": 3}
-
-hungry_cats = hasura.Cats.select(
-    count = True,
-    total = True,
-    Where(isHungry = equal(True))
-)
-# cats = {"data": [...], "count": *Total count of Cats rows*}
-
 ```
 
-Also you can fetch on-fly paginated data by passing **page** and **limit** parameters.
+Also you can fetch on-fly paginated data by using **page** class.
 For example:
 
 ```python
+from hasura.pagination import page
+
+cats = hasura.Cats.select(page(2, limit = 20))
+```
+
+Fetch exact fields you need by using **include** and **exclude** parameters of **select**. By default you will receive response with each column of the model.
+
+```python
+from hasura.pagination import page
+from hasura.where import where, greater_then
 
 cats = hasura.Cats.select(
-    page = 4,
-    limit = 20,
-    count = True,
-    total = True
-)
 
+    page(2, limit = 20)
+    where(Owner__age = greater_then(18))
+
+    include = [
+        hasura.Cats.id,
+        hasura.Cats.color,
+        "name",
+        "stringField",
+
+        hasura.Cats.Owner(
+            "age",
+            "firstName",
+            "lastName"
+        )
+    ]
+
+)
 ```
 
 That's all. Have fun and don't let your cats get hungry.
