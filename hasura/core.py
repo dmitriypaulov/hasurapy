@@ -13,9 +13,9 @@ class Hasura():
         self.fetch_metadata()
 
     def __setattr__(self, name, value): self.__dict__[name] = value
-    def __getattr__(self, name, default = None): return self.__dict__.get(name, default)
+    def __getattr__(self, name, default = None) -> Table: return self.__dict__.get(name, default)
     def __setitem__(self, name, value): self.__dict__[name] = value
-    def __getitem__(self, name): return self.__dict__.get(name, None)
+    def __getitem__(self, name) -> Table: return self.__dict__.get(name, None)
 
     def __str__(self): return f"<Hasura url='{self.url}' tables={list(self.tables.values())}>"
     def __repr__(self): return self.__str__()
@@ -36,6 +36,15 @@ class Hasura():
                 "type": _type,
                 "args": args or {}
             },
+        )
+        return response.json()
+
+    def graphql_request(self, code, _type = "query"):
+        
+        response = requests.post(
+            self.url,
+            headers = self.headers,
+            json = {_type: code},
         )
         return response.json()
 
