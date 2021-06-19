@@ -39,6 +39,15 @@ class Hasura():
         )
         return response.json()
 
+    def graphql_request(self, code, _type = "query"):
+        
+        response = requests.post(
+            self.url,
+            headers = self.headers,
+            json = {_type: code},
+        )
+        return response.json()
+
     def fetch_metadata(self):
 
         result = self.query_request(

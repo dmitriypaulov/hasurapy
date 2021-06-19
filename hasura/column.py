@@ -60,5 +60,5 @@ class ColumnQuery():
 
     def __str__(self): 
         if self.fields: 
-            return f"{self.column.name}: {{{' '.join(map(str, self.fields))}}}"
+            return f"{self.column.name} {{{' '.join(map(str, self.fields))}}}"
         else: return self.column.name
