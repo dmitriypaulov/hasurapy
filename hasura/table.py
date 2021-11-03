@@ -1,19 +1,19 @@
+import textwrap
 from hasura.utils.mutations import UpdateObject, InsertObject
 from hasura.order_by import order_by
 from hasura.aggregate import aggregate
-import textwrap
-from hasura.where.where import where
+from hasura.conditions.where import where
 from hasura.distinct_on import distinct_on
 from hasura.pagination import limit, offset, page
 from hasura.column import Column, ColumnQuery
+from hasura.orm import RecordSet
 
 class Table():
 
-    def __init__(self, name, hasura):
-        
+    def __init__(self, name, hasura, fetch=True):
         self.__name = name
         self.hasura = hasura
-        self.fetch_metadata()
+        if fetch: self.fetch_metadata()
 
     def __setattr__(self, name, value): self.__dict__[name] = value
     def __getattr__(self, name, default = None) -> Column: return self.__dict__.get(name, default)
@@ -23,15 +23,31 @@ class Table():
     def __str__(self): return f"<Table name='{self.__name}' columns={list(self.columns.values())}>"
     def __repr__(self): return self.__str__()
 
-    def pretty_str(self): 
+    def pretty_str(self):
         _string = f"<Table name='{self.__name}' columns = [\n"
         for column in self.columns.values():
             _string += textwrap.indent(column.pretty_str(), "\t") + "\n"
         _string += "]>"
         return _string
 
+    @classmethod
+    def from_json(cls, data, hasura):
+        table = cls(data["name"], hasura, False)
+        table.columns = {
+            column["name"]: Column.from_json(column)
+            for column in data["columns"]
+        }
+        return table
+
+    def to_json(self):
+        return {
+            "name": self.__name,
+            "columns": [self.columns[column].to_json()
+                        for column in self.columns]
+        }
+
     def fetch_metadata(self):
-        
+
         result = self.hasura.query_request(
             _type = "run_sql",
             args = {
@@ -52,33 +68,37 @@ class Table():
     def returning(self, include = None, exclude = None):
 
         column_queries = []
-        if not include: column_queries = [ColumnQuery(column) for column in self.columns.values()]
-        else: 
+        if not include:
+            for column in self.columns.values():
+                # print(column._type)
+                column_query = ColumnQuery(column)
+                column_queries.append(column_query)
+        else:
             for field in include:
-                
+
                 if type(field) is str:
                     column_queries.append(ColumnQuery(self.columns[field]))
-                
+
                 if type(field) is Column:
                     column_queries.append(ColumnQuery(self.columns[field.name]))
-                
+
                 elif type(field) is dict:
                     for key, value in field.items():
                         column_queries.append(ColumnQuery(self.columns[key], *value))
 
         if exclude:
             for field in exclude:
-                
+
                 if type(field) is str:
                     for index, query in enumerate(column_queries):
                         if query.column.name == field:
                             del column_queries[index]
-                
+
                 if type(field) is Column:
                     for index, query in enumerate(column_queries):
                         if query.column.name == field.name:
                             del column_queries[index]
-                    
+
                 if type(field) is dict:
                     for key, value in field.items():
                         for query in column_queries:
@@ -95,7 +115,7 @@ class Table():
         parameters = []
         for arg in args:
             if isinstance(arg, (
-                where, distinct_on, 
+                where, distinct_on,
                 limit, offset, page,
                 order_by, InsertObject,
                 UpdateObject,
@@ -113,18 +133,18 @@ class Table():
         return _aggregate
 
     def select(self, *args, include = None, exclude = None):
-        
+
         returning = self.returning(include, exclude)
         parameters = self.parameters(*args)
         aggregate = self.aggregate(parameters, *args)
 
         query_code = f"query {{{self.__name}{parameters}{{{returning}}}{aggregate}}}"
         result = self.hasura.graphql_request(query_code)
-        try: return result["data"]
+        try: return RecordSet(result["data"][self.__name], self)
         except KeyError: raise Exception(result)
 
     def insert(self, *args, _object = None, include = None, exclude = None, **kwargs):
-        
+
         _object = _object or {}
         _object.update(kwargs)
         insert_object = InsertObject(_object)
@@ -135,11 +155,11 @@ class Table():
 
         mutation_code = f"mutation {{insert_{self.__name}_one{parameters}{{{returning} {aggregate}}}}}"
         result = self.hasura.graphql_request(mutation_code)
-        try: return result["data"][f"insert_{self.__name}_one"]
+        try: return RecordSet([result["data"][f"insert_{self.__name}_one"]], self)
         except KeyError: raise Exception(result)
 
     def update(self, *args, _set = None, include = None, exclude = None, **kwargs):
-        
+
         _set = _set or {}
         _set.update(kwargs)
         update_object = UpdateObject(_set)
@@ -150,7 +170,7 @@ class Table():
 
         mutation_code = f"mutation {{update_{self.__name}{parameters}{{returning{{{returning} {aggregate}}}}}}}"
         result = self.hasura.graphql_request(mutation_code)
-        try: return result["data"][f"update_{self.__name}"]["returning"]
+        try: return RecordSet(result["data"][f"update_{self.__name}"]["returning"], self)
         except KeyError: raise Exception(result)
 
     def delete(self, *args, include = None, exclude = None, **kwargs):
@@ -163,7 +183,3 @@ class Table():
         result = self.hasura.graphql_request(mutation_code)
         try: return result["data"][f"delete_{self.__name}"]["returning"]
         except KeyError: raise Exception(result)
-
-                
-                
-

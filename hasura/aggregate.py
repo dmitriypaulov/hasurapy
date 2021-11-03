@@ -18,7 +18,7 @@ class aggregate():
         result = notation + "{"
         if isinstance(metric, str): return result + metric + "}"
         elif isinstance(metric, Column): return result + metric.name + "}"
-        elif isinstance(metric, Iterable): 
+        elif isinstance(metric, Iterable):
             cols = []
             for col in metric:
                 if isinstance(col, str): cols.append(col)
