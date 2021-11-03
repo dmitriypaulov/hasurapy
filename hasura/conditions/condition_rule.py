@@ -1,8 +1,8 @@
-from hasura.where.condition import Condition, equal, is_null
+from hasura.conditions.condition import Condition, equal, is_null
 
 
 class ConditionRule():
-    
+
     def __init__(self, name, condition):
         self.name = name
         self.condition = condition

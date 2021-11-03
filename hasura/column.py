@@ -13,7 +13,7 @@ class Column():
             column.parent = self
 
     def __setattr__(self, name, value): self.__dict__[name] = value
-    def __getattr__(self, name, default = None): 
+    def __getattr__(self, name, default = None):
         item = self.__dict__.get(name, default)
         if not item: item = self.nested.get(name, default)
         return item
@@ -25,7 +25,27 @@ class Column():
     def __str__(self): return f"<Column name='{self.name}' type='{self._type}'>"
     def __repr__(self): return self.__str__()
 
-    def resolve(self): 
+    @classmethod
+    def from_json(cls, data):
+        return cls(
+            data["name"],
+            data["type"],
+            None,
+            {
+                nested["name"]: cls.from_json(nested)
+                for nested in data["nested"]
+            }
+        )
+
+    def to_json(self, dump_nested=True):
+        return {
+            "name": self.name,
+            "type": self._type,
+            "nested": [self.nested[nested].to_json(False)
+            for nested in self.nested] if dump_nested else []
+        }
+
+    def resolve(self):
         if self.parent: return f"{self.parent.resolve()}__{self.name}"
         else: return self.name
 
@@ -47,18 +67,22 @@ class ColumnQuery():
         self.column = column
         self.fields = []
 
-        if not include: self.fields = [ColumnQuery(column) for column in self.column.nested.values() if not column.nested]
+        if not include:
+            for column in self.column.nested.values():
+                if column._type in ("many2one", "many2many", "one2many") \
+                    and not column.nested: continue
+                self.fields.append(ColumnQuery(column))
         else:
             for field in include:
-                
+
                 if type(field) is str:
                     self.fields.append(ColumnQuery(self.column.nested[field]))
-                
+
                 elif type(field) is dict:
                     for key, value in field.items():
                         self.fields.append(ColumnQuery(self.column.nested[key], include = value))
 
-    def __str__(self): 
-        if self.fields: 
+    def __str__(self):
+        if self.fields:
             return f"{self.column.name} {{{' '.join(map(str, self.fields))}}}"
         else: return self.column.name

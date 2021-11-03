@@ -1,12 +1,12 @@
-from hasura.where.condition_rule import ConditionRule
-from hasura.where.condition import Condition, equal, is_null
+from hasura.conditions.condition_rule import ConditionRule
+from hasura.conditions.condition import Condition, equal, is_null
 
 class ComplexCondition(Condition):
-    
+
     def __init__(self, notation, *args, **kwargs):
         self.notation = notation
         self.rules = []
-        
+
         for key, value in kwargs.items():
             if isinstance(value, Condition):
                 self.rules.append(ConditionRule(key, value))

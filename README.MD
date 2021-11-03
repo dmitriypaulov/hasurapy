@@ -2,7 +2,7 @@
 
 ---
 
-Simple python wrapper for Hasura PostgreSQL graphql API. 
+Simple python wrapper for Hasura PostgreSQL graphql API.
 Automatically grabs schema and metadata information to build models.
 
 Usage example:
@@ -10,7 +10,7 @@ Usage example:
 ```python
 
 from hasura import Hasura
-from hasura.where import where, is_in
+from hasura.conditions import where, is_in
 from hasura.order_by import order_by, desc
 
 hasura = Hasura(
@@ -26,8 +26,8 @@ result = cats.select(
     order_by(livesLeft = desc), # desc(cats.livesLeft) or desc("livesLeft")
     where(
         color = is_in(
-            "Grey", 
-            "Black", 
+            "Grey",
+            "Black",
             "Green(?)"
         )
     )
@@ -43,14 +43,14 @@ from hasura.aggregate import aggregate
 
 cats = hasura.Cats.select(
     aggregate(
-        count = True, min = "livesLeft", 
+        count = True, min = "livesLeft",
         max = "hunger", average = "lifeLength"
     ),
 
     where(
         color = is_in(
-            "Grey", 
-            "Black", 
+            "Grey",
+            "Black",
             "Transparent"
         )
     )
@@ -70,7 +70,7 @@ Fetch exact fields you need by using **include** and **exclude** parameters of *
 
 ```python
 from hasura.pagination import page
-from hasura.where import where, greater_then
+from hasura.conditions import where, greater_then
 
 cats = hasura.Cats.select(
 

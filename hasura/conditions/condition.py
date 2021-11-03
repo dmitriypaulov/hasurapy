@@ -1,15 +1,15 @@
-class Condition(): 
+class Condition():
 
     def __init__(self, notation, value):
         self.notation = notation
         self.value = value
 
     def jsonify(self, value):
-        if type(value) in (tuple, list): 
+        if type(value) in (tuple, list):
             _value = ', '.join(
                 list(
                     map(
-                        self.jsonify, 
+                        self.jsonify,
                         value
                     )
                 )
@@ -17,14 +17,14 @@ class Condition():
             return f"[{_value}]"
         elif type(value) is dict:
             _value = ', '.join([
-                key + ':' + self.jsonify(value) 
+                key + ':' + self.jsonify(value)
                 for key, value in value.items()
             ])
             return f"{{{_value}}}"
         elif type(value) is bool: return str(value).lower()
         elif type(value) is str: return f'"{value}"'
         elif value == None: return "null"
-        return value
+        return str(value)
 
     def __str__(self): return f"{self.notation}: {self.jsonify(self.value)}"
 

@@ -1,6 +1,6 @@
-from hasura.where.complex_condition import ComplexCondition
-from hasura.where.condition_rule import ConditionBlock, ConditionRule
-from hasura.where.condition import Condition, equal, is_null
+from hasura.conditions.complex_condition import ComplexCondition
+from hasura.conditions.condition_rule import ConditionBlock, ConditionRule
+from hasura.conditions.condition import Condition, equal, is_null
 
 class where():
     def __init__(self, *args, **kwargs):
